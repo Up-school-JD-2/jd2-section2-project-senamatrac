@@ -3,10 +3,8 @@ package src.service;
 import src.data.Contact;
 import src.data.Phone;
 
-import javax.sound.midi.Soundbank;
 import java.util.List;
 import java.util.Objects;
-import java.util.Timer;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +38,7 @@ public class PhoneContactService {
     public boolean updateContact(Contact selectedContact) {
         var inPhoneContact = phone.getContacts().stream().filter(contact -> Objects.equals(contact.getId(), selectedContact.getId())).findFirst();
 
-        if (inPhoneContact.isPresent()){
+        if (inPhoneContact.isPresent()) {
             inPhoneContact.ifPresent(contact -> {
                 contact.setName(selectedContact.getName());
                 contact.setSurname(selectedContact.getSurname());
@@ -67,10 +65,10 @@ public class PhoneContactService {
         try {
             TimeUnit.SECONDS.sleep(1);
             int currentCount = contact.getCallCount();
-            contact.setCallCount(currentCount+1);
+            contact.setCallCount(currentCount + 1);
         } catch (InterruptedException e) {
             System.out.println("Ulaşılamıyor...");
-        }finally{
+        } finally {
             System.out.println("Arama sonlandı.");
         }
     }

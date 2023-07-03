@@ -13,6 +13,7 @@ public class Contact implements Serializable {
     private String email;
 
     private int callCount = 0;
+
     public Contact(UUID id, String name, String phoneNumber) {
         this.id = id;
         this.name = name;
@@ -20,7 +21,7 @@ public class Contact implements Serializable {
     }
 
     public Contact(UUID id, String name, String surname, String phoneNumber, String email) {
-        this(id,name,phoneNumber);
+        this(id, name, phoneNumber);
         this.surname = surname;
         this.email = email;
     }
@@ -75,6 +76,7 @@ public class Contact implements Serializable {
     public String getFormattedPhoneNumber() {
         return String.valueOf(phoneNumber).replaceFirst("(\\d{4})(\\d{3})(\\d+)", "($1)-$2-$3");
     }
+
     @Override
     public String toString() {
         return "Contact{" +

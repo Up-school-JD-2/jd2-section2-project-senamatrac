@@ -1,11 +1,10 @@
 package src;
 
-import src.data.*;
+import src.data.ApplicationStore;
+import src.data.Contact;
+import src.data.Phone;
+import src.data.PhoneManagementSystem;
 import src.exception.PhoneAlreadyInSystem;
-import src.service.PhoneAppService;
-import src.service.PhoneBackUpService;
-import src.service.PhoneContactService;
-import src.service.PhoneStorageService;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -29,7 +28,7 @@ public class Main {
                 System.out.println("3- Admin girişi");
                 scNextInt = scanner.nextInt();
                 switch (scNextInt) {
-                    case 0->{
+                    case 0 -> {
                         System.out.println("1- Kullanıcı kayıt");
                         System.out.println("2- Kullanıcı giriş");
                         System.out.println("3- Admin girişi");
@@ -54,9 +53,8 @@ public class Main {
 
                         System.out.print("Bellek boyutu (GB): ");
                         double size = scanner.nextDouble();
-                        double sizeMb = size * 1000;
 
-                        phone = new Phone(brand, model, serialNumber, os, size, owner);
+                        phone = new Phone(brand, model, serialNumber, os, size*1000, owner);
                         boolean result = false;
                         try {
                             result = PhoneManagementSystem.getInstance().addNewPhone(phone);
@@ -75,17 +73,17 @@ public class Main {
                         for (int i = 0; i < phoneList.size(); i++) {
                             System.out.println((i + 1) + "- Marka: " + phoneList.get(i).getBrand() + " Model: " + phoneList.get(i).getModel());
                         }
-                        if (phoneList.size()>0) {
+                        if (phoneList.size() > 0) {
                             System.out.println("->Açmak istediğiniz telefonun sıra numarasını giriniz: ");
                             boolean inputException = true;
                             do {
                                 try {
                                     System.out.print("Seçiminiz: ");
                                     int phoneIndex = scanner.nextInt();
-                                    if ((phoneIndex>0 && phoneIndex<phoneList.size()) ||phoneList.get(phoneIndex - 1) != null) {
+                                    if ((phoneIndex > 0 && phoneIndex < phoneList.size()) || phoneList.get(phoneIndex - 1) != null) {
                                         phone = phoneList.get(phoneIndex - 1);
                                         inputException = false;
-                                    }else
+                                    } else
                                         System.out.println("Hatalı sıra numarası girdiniz");
                                 } catch (InputMismatchException e) {
                                     System.out.println("Hatalı giriş yaptınız.Tekrar giriniz: ");
@@ -111,21 +109,21 @@ public class Main {
                                 if (selected == 1) {
                                     System.out.print("Silinecek uygulama sıra numarası: ");
                                     int appIndex = scanner.nextInt();
-                                    if (appIndex>0 && appIndex<=allApplication.size()) {
-                                        boolean result = ApplicationStore.getInstance().unInstallApplicationFromStore(allApplication.get(appIndex-1));
-                                        UIService.showResult(result,result? "Uygulama mağazadan kaldırıldı.":"Uygulama kaldırılamadı.");
-                                    }else{
+                                    if (appIndex > 0 && appIndex <= allApplication.size()) {
+                                        boolean result = ApplicationStore.getInstance().unInstallApplicationFromStore(allApplication.get(appIndex - 1));
+                                        UIService.showResult(result, result ? "Uygulama mağazadan kaldırıldı." : "Uygulama kaldırılamadı.");
+                                    } else {
                                         System.out.println("Yanlış sıra numarası girdiniz.");
                                     }
 
-                                }else if(selected == 2){
+                                } else if (selected == 2) {
                                     System.out.print("Güncellenecek uygulama sıra numarası: ");
                                     int appIndex = scanner.nextInt();
-                                    if (appIndex>0 && appIndex<=allApplication.size()) {
-                                        var app = allApplication.get(appIndex-1).clone();
-                                        System.out.print("Version ("+app.getCurrentVersion()+"): ");
+                                    if (appIndex > 0 && appIndex <= allApplication.size()) {
+                                        var app = allApplication.get(appIndex - 1).clone();
+                                        System.out.print("Version (" + app.getCurrentVersion() + "): ");
                                         int version = scanner.nextInt();
-                                        System.out.print("Size("+app.getSize()+"MB): ");
+                                        System.out.print("Size(" + app.getSize() + "MB): ");
                                         double size = scanner.nextDouble();
                                         app.setCurrentVersion(version);
                                         app.setSize(size);
@@ -133,12 +131,12 @@ public class Main {
 
 
                                         boolean result = ApplicationStore.getInstance().updateApplicationToStore(app);
-                                        UIService.showResult(result,result? "Uygulama güncellendi.":"Uygulama güncellenemedi.");
-                                    }else{
+                                        UIService.showResult(result, result ? "Uygulama güncellendi." : "Uygulama güncellenemedi.");
+                                    } else {
                                         System.out.println("Yanlış sıra numarası girdiniz.");
                                     }
 
-                                }else
+                                } else
                                     System.out.println("hatalı giriş yaptınız.");
                             }
                         }

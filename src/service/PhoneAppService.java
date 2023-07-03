@@ -20,7 +20,7 @@ public class PhoneAppService {
         if (phone.getApplications().stream().anyMatch(inPhone -> Objects.equals(inPhone.getId(), storeApplication.getId()))) {
             throw new ApplicationAlreadyInstalledException(storeApplication.getName());
         }
-        if (phone.getUsedStorage() + storeApplication.getSize() > phone.getStorage()){
+        if (phone.getUsedStorage() + storeApplication.getSize() > phone.getStorage()) {
             throw new PhoneStorageException();
         }
 
@@ -31,7 +31,7 @@ public class PhoneAppService {
         var storeApplicationOptional = ApplicationStore.getInstance().getApplications().stream().filter(storeApplication -> Objects.equals(storeApplication.getId(), inPhoneApplication.getId())).findFirst();
         if (storeApplicationOptional.isPresent()) {
             var storeApplication = storeApplicationOptional.get();
-            if (phone.getUsedStorage() - inPhoneApplication.getSize() + storeApplication.getSize() > phone.getStorage()){
+            if (phone.getUsedStorage() - inPhoneApplication.getSize() + storeApplication.getSize() > phone.getStorage()) {
                 throw new PhoneStorageException();
             }
             if (storeApplication.getCurrentVersion() == inPhoneApplication.getCurrentVersion()) {
@@ -41,8 +41,7 @@ public class PhoneAppService {
             phone.removeApplication(inPhoneApplication);
             phone.addApplication(storeApplication);
             return true;
-        }
-        else {
+        } else {
             throw new ApplicationNotAvailableAnymore(inPhoneApplication.getName());
         }
     }

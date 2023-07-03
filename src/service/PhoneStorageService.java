@@ -13,7 +13,7 @@ public class PhoneStorageService {
         this.phone = phone;
     }
 
-    public Map<String,Double> getApplicationsStorages() {
+    public Map<String, Double> getApplicationsStorages() {
         return phone.getApplications().stream().collect(Collectors.toMap(Application::getName, Application::getSize));
     }
 
@@ -21,11 +21,11 @@ public class PhoneStorageService {
         return phone.getStorage() - phone.getUsedStorage();
     }
 
-    public double getFreeSpacePercentage(){
+    public double getFreeSpacePercentage() {
         return getFreeSpace() / phone.getStorage() * 100;
     }
 
-    public double getUsedSpacePercentage(){
+    public double getUsedSpacePercentage() {
         return phone.getUsedStorage() / phone.getStorage() * 100;
     }
 

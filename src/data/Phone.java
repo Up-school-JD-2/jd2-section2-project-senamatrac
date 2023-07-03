@@ -19,7 +19,7 @@ public class Phone {
     private double usedStorage;
     private String owner;
 
-    private List<Contact> contacts;
+    private final List<Contact> contacts;
 
     public Phone(String brand, String model, String serialNumber, String operationSystem, double storage, String owner) {
         this.brand = brand;
@@ -27,7 +27,7 @@ public class Phone {
         this.serialNumber = serialNumber;
         this.operationSystem = operationSystem;
         this.storage = storage;
-        this.owner =  owner;
+        this.owner = owner;
         this.usedStorage = 0d;
         this.contacts = new ArrayList<>();
         applications = new HashSet<>();
@@ -36,8 +36,8 @@ public class Phone {
     }
 
     private void installDefaultApplications() {
-        addApplication(new Application(UUID.randomUUID(),"Contacts", LocalDate.of(2023,1,1),1,20d,true, brand.toUpperCase()));
-        addApplication(new Application(UUID.randomUUID(),"Messages", LocalDate.of(2023,1,4),1,75d,true, brand.toUpperCase()));
+        addApplication(new Application(UUID.randomUUID(), "Contacts", LocalDate.of(2023, 1, 1), 1, 20d, true, brand.toUpperCase()));
+        addApplication(new Application(UUID.randomUUID(), "Messages", LocalDate.of(2023, 1, 4), 1, 75d, true, brand.toUpperCase()));
         applications.forEach(application -> {
             try {
                 ApplicationStore.getInstance().installApplicationToStore(application);
@@ -47,16 +47,17 @@ public class Phone {
         });
     }
 
-    public boolean addApplication(Application application){
-        if(this.getApplications().add(application)){
+    public boolean addApplication(Application application) {
+        if (this.getApplications().add(application)) {
             this.usedStorage += application.getSize();
             return true;
         }
         return false;
     }
-    public boolean removeApplication(Application application){
+
+    public boolean removeApplication(Application application) {
         if (applications.contains(application)) {
-            if(this.getApplications().remove(application)) {
+            if (this.getApplications().remove(application)) {
                 this.usedStorage -= application.getSize();
                 return true;
             }
@@ -121,9 +122,11 @@ public class Phone {
     public PhoneStorageService getPhoneStorageService() {
         return new PhoneStorageService(this);
     }
+
     public PhoneBackUpService getPhoneBackupService() {
         return new PhoneBackUpService(this);
     }
+
     @Override
     public String toString() {
         return "Phone{" +
@@ -157,6 +160,7 @@ public class Phone {
         this.contacts.clear();
         this.contacts.addAll(contacts);
     }
+
     public void restoreApplications(Set<Application> applications) {
         this.applications.clear();
         this.applications.addAll(applications);

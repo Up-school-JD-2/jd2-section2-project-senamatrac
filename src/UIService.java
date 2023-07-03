@@ -1,17 +1,12 @@
 package src;
 
 import src.data.*;
-import src.exception.*;
-import src.service.PhoneAppService;
-import src.service.PhoneBackUpService;
-import src.service.PhoneContactService;
-import src.service.PhoneStorageService;
+import src.exception.ApplicationCannotUninstall;
+import src.exception.ApplicationException;
+import src.exception.PhoneStorageException;
 
-import javax.sound.midi.Soundbank;
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class UIService {
 
@@ -35,7 +30,7 @@ public class UIService {
         System.out.println("✅ \u001B[32m" + message + "\u001B[0m");
     }
 
-    public static void showResult(boolean result,String message){
+    public static void showResult(boolean result, String message) {
         if (result)
             showSuccessMessage(message);
         else
@@ -58,8 +53,7 @@ public class UIService {
             System.out.println("\t\u001B[35m┌───────────────────┐\u001B[0m");
             System.out.println("\t\u2753 Güncelle (g):");
             System.out.println("\t\u001B[35m└───────────────────┘\u001B[0m");
-        }
-        else {
+        } else {
             System.out.println("\t\u001B[35m┌───────────────────┬───────────────────┐\u001B[0m");
             System.out.println("\t   \u2753Güncelle (g):    \u2753Sil (s): ");
             System.out.println("\t\u001B[35m└───────────────────┴───────────────────┘\u001B[0m");
@@ -80,8 +74,8 @@ public class UIService {
             case "s" -> {
                 if (!selectedApp.isPreInstalled()) {
                     try {
-                        boolean result =  phone.getPhoneAppService().uninstallApplication(selectedApp);
-                        showResult(result,result ? "Uygulama silindi." : "Uygulama silinemedi.");
+                        boolean result = phone.getPhoneAppService().uninstallApplication(selectedApp);
+                        showResult(result, result ? "Uygulama silindi." : "Uygulama silinemedi.");
                     } catch (ApplicationCannotUninstall e) {
                         showFailedMessage(e.getMessage());
                     }
@@ -103,11 +97,11 @@ public class UIService {
     }
 
     public static void showInnerMenuListOfAllApplications(Scanner scanner, Phone phone, List<Application> applications) {
-        if (applications.size() > 0 ) {
+        if (applications.size() > 0) {
             System.out.println("\t\u001B[33m┌───────────────────────────────────────────────────────┐\u001B[0m");
             System.out.println("  \t\uD83D\uDCDD Uygulama bilgileri için sıra numarasını giriniz:");
             System.out.println("\t\u001B[33m└───────────────────────────────────────────────────────┘\u001B[0m");
-        }else
+        } else
             System.out.println("Uygulama Mağazasından uygulama indirebilirsiniz.");
 
         System.out.println("   \t\uD83D\uDC49 0- Ana menü");
@@ -130,7 +124,7 @@ public class UIService {
     }
 
 
-    public static List<Application> showAllApplicaitonsInStore(){
+    public static List<Application> showAllApplicaitonsInStore() {
         var inStoreApplications = ApplicationStore.getInstance().getApplications().stream().sorted((app1, app2) -> Boolean.compare(app1.isPreInstalled(), app2.isPreInstalled())).toList();
         for (int i = 0; i < inStoreApplications.size(); i++) {
             Application application = inStoreApplications.get(i);
@@ -139,17 +133,18 @@ public class UIService {
                 applicationInfo.append("\uD83D\uDD38 ");
             } else
                 applicationInfo.append("\uD83D\uDD39 ");
-            applicationInfo.append(i+1).append(" ").append(application.getOfferedBy()).append(" - ").append(application.getName()).append(" Size: ").append(application.getSize()).append(" Version: ").append(application.getCurrentVersion());
+            applicationInfo.append(i + 1).append(" ").append(application.getOfferedBy()).append(" - ").append(application.getName()).append(" Size: ").append(application.getSize()).append(" Version: ").append(application.getCurrentVersion());
             System.out.println(applicationInfo);
         }
         return inStoreApplications;
     }
-    public static void showSettings(Scanner scanner, Phone phone){
+
+    public static void showSettings(Scanner scanner, Phone phone) {
         boolean inputException = true;
         do {
             try {
-                int selected=-1;
-                while(selected != 0){
+                int selected = -1;
+                while (selected != 0) {
                     System.out.println("\t\u001B[32m┌──────────────────────────────────────┐\u001B[0m");
                     System.out.println("  \t\uD83D\uDD0D1- Telefon bilgilerini görüntüle");
                     System.out.println("  \t\uD83D\uDD0D2- Bellek görüntüle");
@@ -159,9 +154,9 @@ public class UIService {
                     System.out.println("   \t\uD83D\uDC49 0- Ana menü");
                     System.out.print("Seçiminiz: ");
                     selected = scanner.nextInt();
-                    switch (selected){
+                    switch (selected) {
                         case 1 -> {
-                            System.out.println("Telefon bilgileri  : " );
+                            System.out.println("Telefon bilgileri  : ");
                             System.out.println("Seri numarası      : " + phone.getSerialNumber());
                             System.out.println("Marka              : " + phone.getBrand());
                             System.out.println("Model              : " + phone.getModel());
@@ -170,10 +165,10 @@ public class UIService {
                             System.out.println("Uygulama sayısı    : " + phone.getApplications().size());
                             System.out.println("Contact sayısı     : " + phone.getContacts().size());
                         }
-                        case 2 ->{
+                        case 2 -> {
                             showStorageInfo(phone);
                         }
-                        case 3 ->{
+                        case 3 -> {
                             System.out.println("⌛ Veriler yedekleniyor...");
 
                             try {
@@ -190,7 +185,7 @@ public class UIService {
                                 System.out.println("Kişiler yedeklenemedi.");
                             }
                         }
-                        case 4 ->{
+                        case 4 -> {
                             System.out.println("⌛ Veriler geri yükleniyor...");
                             try {
                                 phone.getPhoneBackupService().restoreApplications();
@@ -207,15 +202,16 @@ public class UIService {
                             }
                         }
                     }
-                inputException  =false;
+                    inputException = false;
                 }
-            }catch (InputMismatchException e){
+            } catch (InputMismatchException e) {
                 System.out.println("Hatalı giriş yaptınız.Tekrar giriniz: ");
             }
-        }while (inputException);
+        } while (inputException);
     }
+
     public static void showStorageInfo(Phone phone) {
-        System.out.println("Telefon Hafızası: " + phone.getStorage() + "MB Kullanılan alan: " + phone.getUsedStorage() + "MB");
+        System.out.println("Telefon Hafızası: " + phone.getStorage()+ "MB Kullanılan alan: " + phone.getUsedStorage() + "MB");
         for (int i = 0; i < 50; i += 2) {
             if (i == 0)
                 System.out.print("╔");
@@ -267,7 +263,7 @@ public class UIService {
                         Contact contact = getContactInfo(scanner, null);
                         boolean result = phone.getPhoneContactService().addContact(contact);
 
-                        showResult(result,result ? "Kişi kayıt edildi." : "Kişi kayıt edilirken bir hata oluştu");
+                        showResult(result, result ? "Kişi kayıt edildi." : "Kişi kayıt edilirken bir hata oluştu");
                     }
                     //endregion
 
@@ -280,7 +276,7 @@ public class UIService {
                                 scanner.nextLine();
                                 try {
                                     int scNextint = scanner.nextInt();
-                                    Contact contact = contacts.get(scNextint-1);
+                                    Contact contact = contacts.get(scNextint - 1);
                                     System.out.println("\tİsim:    " + contact.getName());
                                     System.out.println("\tSoyisim: " + contact.getSurname());
                                     System.out.println("\tNumber:  " + contact.getFormattedPhoneNumber());
@@ -300,12 +296,12 @@ public class UIService {
                                             switch (scNextString) {
                                                 case "g" -> {
                                                     boolean result = phone.getPhoneContactService().updateContact(getContactInfo(scanner, contacts.get(scNextint - 1)));
-                                                    showResult(result,result ? "Kişi güncellendi." : "Kişi güncellenirken bir hata oluştu");
+                                                    showResult(result, result ? "Kişi güncellendi." : "Kişi güncellenirken bir hata oluştu");
                                                     scanner.nextLine();
                                                 }
                                                 case "s" -> {
                                                     boolean result = phone.getPhoneContactService().deleteContact(contacts.get(scNextint - 1));
-                                                    showResult(result,result ? "Kişi silindi." : "Kişi silinirken bir hata oluştu");
+                                                    showResult(result, result ? "Kişi silindi." : "Kişi silinirken bir hata oluştu");
                                                 }
                                             }
                                             inputOptException = false;
@@ -343,10 +339,10 @@ public class UIService {
             } catch (InputMismatchException e) {
                 System.out.println("Hatalı giriş yaptınız.Tekrar giriniz: ");
             }
-        }while (inputException);
+        } while (inputException);
     }
 
-    public static void callViaPhoneNumber(){
+    public static void callViaPhoneNumber() {
 
     }
 
@@ -360,7 +356,7 @@ public class UIService {
 
         boolean wrongNameSurnameInput = true;
         do {
-            System.out.print("İsim " + (contact != null ? "(" + contact.getName()+ "): " : " :"));
+            System.out.print("İsim " + (contact != null ? "(" + contact.getName() + "): " : " :"));
             scanner.nextLine();
             name = scanner.nextLine();
             System.out.print("Soyisim " + (contact != null ? "(" + contact.getSurname() + "): " : " :"));
@@ -378,9 +374,9 @@ public class UIService {
             if (contact != null && !contact.getPhoneNumber().isEmpty())
                 phoneNumberInfo = contact.getPhoneNumber();
 
-            System.out.print("Numara ("+phoneNumberInfo+"):" );
+            System.out.print("Numara (" + phoneNumberInfo + "):");
             phoneNumber = scanner.nextLine();
-            if (contact != null && phoneNumber.isEmpty()){
+            if (contact != null && phoneNumber.isEmpty()) {
                 phoneNumber = contact.getPhoneNumber();
             }
             if (Objects.equals(phoneNumber, ""))
@@ -393,9 +389,9 @@ public class UIService {
 
         boolean wrongEmailInput = true;
         do {
-            System.out.print("Email " + (contact != null ? "(" +  contact.getSurname() + "):" : " :"));
+            System.out.print("Email " + (contact != null ? "(" + contact.getSurname() + "):" : " :"));
             email = scanner.nextLine();
-            if ((contact != null) && email.isEmpty()){
+            if ((contact != null) && email.isEmpty()) {
                 email = contact.getEmail();
             }
             if ((!email.isEmpty() | !email.equals("")) && !Pattern.matches(patternEmail, email)) {
@@ -406,7 +402,7 @@ public class UIService {
         } while (wrongEmailInput);
 
 
-        UUID id = contact != null ?  contact.getId() : UUID.randomUUID();
+        UUID id = contact != null ? contact.getId() : UUID.randomUUID();
         return new Contact(id, name, surname, phoneNumber, email);
     }
 
@@ -419,16 +415,16 @@ public class UIService {
                 System.out.println("  \t\uD83D\uDCDD İndirmek istediğiniz uygulama sıra numarasını giriniz:");
                 System.out.println("\t\u001B[33m└─────────────────────────────────────────────────────────┘\u001B[0m");
                 int scNextint = scanner.nextInt();
-                var inStoreApplication = inStoreApplications.get(scNextint-1);
-                var inPhoneApplicationOpt = phone.getApplications().stream().filter(inPhoneApp ->Objects.equals( inPhoneApp.getId(), inStoreApplication.getId())).findFirst();
+                var inStoreApplication = inStoreApplications.get(scNextint - 1);
+                var inPhoneApplicationOpt = phone.getApplications().stream().filter(inPhoneApp -> Objects.equals(inPhoneApp.getId(), inStoreApplication.getId())).findFirst();
                 boolean result;
                 if (inPhoneApplicationOpt.isPresent()) {
                     result = phone.getPhoneAppService().updateApplication(inPhoneApplicationOpt.get());
 
-                    showResult(result,result? "Uygulama güncellendi.":"Uygulama güncellenirken bir sorun oluştu.");
-                }else {
+                    showResult(result, result ? "Uygulama güncellendi." : "Uygulama güncellenirken bir sorun oluştu.");
+                } else {
                     result = phone.getPhoneAppService().installApplication(inStoreApplication);
-                    showResult(result,result? "Uygulama yüklendi.":"Uygulama yüklenirken bir sorun oluştu.");
+                    showResult(result, result ? "Uygulama yüklendi." : "Uygulama yüklenirken bir sorun oluştu.");
                 }
 
                 inputContactIndexException = false;
@@ -442,9 +438,9 @@ public class UIService {
 
     public static void showAllPhonesInSystem() {
         var phoneMap = PhoneManagementSystem.getInstance().listUserPhone();
-        phoneMap.forEach((owner,phones)->{
+        phoneMap.forEach((owner, phones) -> {
             System.out.println(owner);
-            phones.stream().sorted(Comparator.comparing(Phone::getBrand)).forEach(phone-> System.out.println("\tMarka: "+ phone.getBrand() +" Model: "+ phone.getModel()+" Seri numarası: "+phone.getSerialNumber()));
+            phones.stream().sorted(Comparator.comparing(Phone::getBrand)).forEach(phone -> System.out.println("\tMarka: " + phone.getBrand() + " Model: " + phone.getModel() + " Seri numarası: " + phone.getSerialNumber()));
         });
 
     }

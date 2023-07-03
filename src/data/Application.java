@@ -77,7 +77,7 @@ public class Application implements Cloneable, Serializable {
 
     @Override
     public String toString() {
-        return name+" {" +
+        return name + " {" +
                 "id=" + id +
                 ", releasedOn=" + releasedOn +
                 ", preInstalled=" + preInstalled +
