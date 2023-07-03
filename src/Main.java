@@ -21,7 +21,6 @@ public class Main {
         boolean exit = false;
         System.out.println("Uygulamayı Sonlandırmak için -1.");
         while (!exit) {
-            boolean userCannotEntred = true;
             do {
                 System.out.println("1- Kullanıcı kayıt");
                 System.out.println("2- Kullanıcı giriş");
@@ -55,7 +54,7 @@ public class Main {
                         double size = scanner.nextDouble();
 
                         phone = new Phone(brand, model, serialNumber, os, size*1000, owner);
-                        boolean result = false;
+                        boolean result ;
                         try {
                             result = PhoneManagementSystem.getInstance().addNewPhone(phone);
                             UIService.showResult(result, result ? "Telefon sisteme kayıt edildi." : "Telefon sisteme kayıt edilemedi.");
@@ -180,7 +179,7 @@ public class Main {
                                 while (wrongInput) {
                                     try {
                                         String patternPhoneNumber = "\\d{11}";
-                                        String phoneNumber = "";
+                                        String phoneNumber ;
                                         boolean wrongPhoneNumberInput = true;
                                         do {
                                             System.out.print("Telefon numarasını giriniz (11 Haneli olmalı): ");
